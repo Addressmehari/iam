@@ -5,11 +5,9 @@ const wall = document.getElementById('wall')!;
 
 // Center the wall initially
 // Initial Position (relative to transform-origin 0,0)
-let scrollLeft = -(2000 - window.innerWidth / 2);
 let scrollTop = 0; // Start at the top of the wall
 
 let isDragging = false;
-let startX = 0;
 let startY = 0;
 const zoomScale = 1; 
 let currentClusterIndex = 0;
