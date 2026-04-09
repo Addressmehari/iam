@@ -1,10 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
 
 :root {
-  --wall-bg: #0f172a;
-  --grid-color: rgba(148, 163, 184, 0.08);
+  --cardboard-base: #241e1a;
+  --cardboard-lighter: #2d2621;
+  --cardboard-darker: #1a1512;
+  --grid-color: rgba(255, 255, 255, 0.04);
   --text-primary: #f8fafc;
-  --note-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  --note-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
   --accent-glow: rgba(56, 189, 248, 0.15);
 }
 
@@ -19,7 +21,7 @@ body, html {
   width: 100%;
   height: 100%;
   overflow: hidden; /* No standard scroll */
-  background-color: var(--wall-bg);
+  background-color: var(--cardboard-base);
   font-family: 'Outfit', sans-serif;
 }
 
@@ -29,7 +31,7 @@ body, html {
   position: relative;
   overflow: hidden;
   cursor: grab;
-  box-shadow: inset 0 0 150px rgba(0,0,0,0.5); /* Physical depth vignette */
+  box-shadow: inset 0 0 150px rgba(0,0,0,0.3); /* Physical depth vignette */
 }
 
 /* Immersive lighting overlay */
@@ -38,7 +40,7 @@ body, html {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
   pointer-events: none;
-  background: radial-gradient(circle at center, transparent 30%, rgba(15, 23, 42, 0.4) 100%);
+  background: radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.5) 100%);
   z-index: 50;
 }
 
@@ -50,11 +52,16 @@ body, html {
   position: absolute;
   width: 4000px;
   height: 4000px;
+  background-color: var(--cardboard-base);
   background-image: 
+    /* The Grid Lines */
     linear-gradient(var(--grid-color) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-  background-size: 100px 100px;
-  background-color: var(--wall-bg);
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px),
+    /* Fibrous texture (Vertical) */
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px),
+    /* Grainy noise effect */
+    repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, transparent 2px, rgba(0,0,0,0.01) 4px);
+  background-size: 100px 100px, 100px 100px, 100% 4px, 6px 6px;
   will-change: transform;
 }
 
