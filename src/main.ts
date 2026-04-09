@@ -7,8 +7,6 @@ const wall = document.getElementById('wall')!;
 // Initial Position (relative to transform-origin 0,0)
 let scrollTop = 0; // Start at the top of the wall
 
-let isDragging = false;
-let startY = 0;
 const zoomScale = 1; 
 let currentClusterIndex = 0;
 
@@ -73,39 +71,29 @@ const updateWallTransform = () => {
 // Set initial position
 updateWallTransform();
 
-const startDragging = (e: MouseEvent | TouchEvent) => {
-  isDragging = true;
-  const pageY = 'touches' in e ? e.touches[0].pageY : e.pageY;
-  
-  startY = pageY - scrollTop;
-  
-  viewport.style.cursor = 'grabbing';
-};
+// Interactive notes: Bring to front
 
-const stopDragging = () => {
-  isDragging = false;
-  viewport.style.cursor = 'grab';
-};
-
-const move = (e: MouseEvent | TouchEvent) => {
-  if (!isDragging) return;
+// Mouse Wheel / Trackpad (2-finger) scroll
+window.addEventListener('wheel', (e) => {
   e.preventDefault();
-  
-  const pageY = 'touches' in e ? e.touches[0].pageY : e.pageY;
-  
-  scrollTop = pageY - startY;
-  
+  scrollTop -= e.deltaY;
   updateWallTransform();
-};
+}, { passive: false });
 
-// Event Listeners
-viewport.addEventListener('mousedown', startDragging);
-window.addEventListener('mouseup', stopDragging);
-window.addEventListener('mousemove', move);
+// Keyboard Navigation
+window.addEventListener('keydown', (e) => {
+  const scrollStep = 100;
+  if (e.key === 'ArrowDown') {
+    scrollTop -= scrollStep;
+    updateWallTransform();
+  } else if (e.key === 'ArrowUp') {
+    scrollTop += scrollStep;
+    updateWallTransform();
+  }
+});
 
-viewport.addEventListener('touchstart', startDragging, { passive: false });
-window.addEventListener('touchend', stopDragging);
-window.addEventListener('touchmove', move, { passive: false });
+// Event Listeners (Locked to Wheel/Keyboard/Buttons)
+// Removed Dragging/Panning listeners per user request
 
 // Interactive notes: Bring to front
 const notes = document.querySelectorAll('.note');
