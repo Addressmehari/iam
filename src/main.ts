@@ -63,4 +63,58 @@ notes.forEach(note => {
   });
 });
 
+// Connector Lines Logic
+const drawConnectors = () => {
+  const svg = document.getElementById('connectors-svg') as unknown as SVGSVGElement;
+  if (!svg) return;
+
+  const clusters = document.querySelectorAll('.cluster');
+  const container = document.querySelector('.grid-container')!;
+  const containerRect = container.getBoundingClientRect();
+
+  // Clear existing paths
+  svg.innerHTML = '';
+
+  let pathData = '';
+
+  clusters.forEach((cluster, index) => {
+    const rect = cluster.getBoundingClientRect();
+    
+    // Calculate center relative to grid-container
+    const x = (rect.left + rect.width / 2) - containerRect.left;
+    const y = (rect.top + rect.height / 2) - containerRect.top;
+
+    if (index === 0) {
+      pathData = `M ${x} ${y}`;
+    } else {
+      const prevRect = clusters[index - 1].getBoundingClientRect();
+      const prevX = (prevRect.left + prevRect.width / 2) - containerRect.left;
+      const prevY = (prevRect.top + prevRect.height / 2) - containerRect.top;
+      
+      // Control point for smooth curve
+      const cpX = (x + prevX) / 2;
+      const cpY = (y + prevY) / 2 + 50; 
+      
+      pathData += ` Q ${cpX} ${cpY} ${x} ${y}`;
+    }
+  });
+
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', pathData);
+  path.setAttribute('fill', 'none');
+  path.setAttribute('stroke', 'rgba(255, 255, 255, 0.15)');
+  path.setAttribute('stroke-width', '5');
+  path.setAttribute('stroke-dasharray', '15 15');
+  path.style.strokeLinecap = 'round';
+  path.classList.add('connector-line');
+  
+  svg.appendChild(path);
+};
+
+// Initial draw and on resize
+window.addEventListener('load', () => {
+  setTimeout(drawConnectors, 200); // Give time for CSS layout
+});
+window.addEventListener('resize', drawConnectors);
+
 console.log('Grid Wall Portfolio Initialized - Centered');
