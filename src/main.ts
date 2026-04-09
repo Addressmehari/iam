@@ -11,7 +11,9 @@ let scrollTop = 0; // Start at the top of the wall
 let isDragging = false;
 let startX = 0;
 let startY = 0;
-const zoomScale = 1; // Locked zoom
+const zoomScale = 1; 
+let currentClusterIndex = 0;
+
 
 // Connector Lines Logic
 const drawConnectors = () => {
@@ -62,23 +64,12 @@ const drawConnectors = () => {
 };
 
 const updateWallTransform = () => {
-  const wallWidth = 4000;
-  const wallHeight = 8000;
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-
-  // LOCK X-AXIS: Always center the wall horizontally
-  scrollLeft = (vw - wallWidth) / 2;
-
-  // Clamp Y logic
-  if (wallHeight <= vh) {
-    scrollTop = (vh - wallHeight) / 2;
-  } else {
-    scrollTop = Math.min(0, Math.max(scrollTop, vh - wallHeight));
-  }
-
-  wall.style.transform = `translate(${scrollLeft}px, ${scrollTop}px)`;
+  // LOCK X-AXIS: Only use vertical scroll
+  wall.style.transform = `translate(0px, ${scrollTop}px)`;
   drawConnectors();
+  
+  // Dynamic background offset (Scroll grid vertically only)
+  viewport.style.backgroundPosition = `0px ${scrollTop}px`;
 };
 
 // Set initial position
@@ -144,6 +135,13 @@ const scrollToCluster = (targetCluster: Element) => {
   const startTime = performance.now();
   const duration = 800; // slightly faster for linear flow
 
+  // Highlight the button briefly
+  const btn = targetCluster.querySelector('.next-group-btn') as HTMLElement;
+  if (btn) {
+    btn.style.transform = 'scale(1.2) translateX(0)';
+    setTimeout(() => btn.style.transform = '', 1000);
+  }
+
   const animate = (currentTime: number) => {
     const elapsed = currentTime - startTime;
     const progress = Math.min(elapsed / duration, 1);
@@ -170,8 +168,8 @@ nextButtons.forEach((btn, index) => {
   btn.addEventListener('click', (e) => {
     e.stopPropagation(); // Prevent wall drag start
     const clusters = document.querySelectorAll('.cluster');
-    const nextIndex = (index + 1) % clusters.length;
-    scrollToCluster(clusters[nextIndex]);
+    currentClusterIndex = (index + 1) % clusters.length; // Update index
+    scrollToCluster(clusters[currentClusterIndex]);
   });
 });
 
