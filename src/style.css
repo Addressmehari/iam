@@ -70,14 +70,15 @@ body, html {
 .wall-title {
   position: absolute;
   left: 50%;
-  top: 15%;
-  transform: translate(-50%, -50%);
-  font-size: 12rem;
+  top: 180px;
+  transform: translateX(-50%);
+  font-size: 6rem;
   font-weight: 900;
-  color: rgba(255, 255, 255, 0.02);
+  color: rgba(255, 255, 255, 0.95); /* Bright White */
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Deep Shadow for pop */
   pointer-events: none;
   text-transform: uppercase;
-  letter-spacing: 0.5em;
+  letter-spacing: 0.4em;
   white-space: nowrap;
 }
 
