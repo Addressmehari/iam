@@ -67,12 +67,8 @@ const updateWallTransform = () => {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
 
-  // Clamp X logic
-  if (wallWidth <= vw) {
-    scrollLeft = (vw - wallWidth) / 2;
-  } else {
-    scrollLeft = Math.min(0, Math.max(scrollLeft, vw - wallWidth));
-  }
+  // LOCK X-AXIS: Always center the wall horizontally
+  scrollLeft = (vw - wallWidth) / 2;
 
   // Clamp Y logic
   if (wallHeight <= vh) {
@@ -90,10 +86,8 @@ updateWallTransform();
 
 const startDragging = (e: MouseEvent | TouchEvent) => {
   isDragging = true;
-  const pageX = 'touches' in e ? e.touches[0].pageX : e.pageX;
   const pageY = 'touches' in e ? e.touches[0].pageY : e.pageY;
   
-  startX = pageX - scrollLeft;
   startY = pageY - scrollTop;
   
   viewport.style.cursor = 'grabbing';
@@ -108,15 +102,12 @@ const move = (e: MouseEvent | TouchEvent) => {
   if (!isDragging) return;
   e.preventDefault();
   
-  const pageX = 'touches' in e ? e.touches[0].pageX : e.pageX;
   const pageY = 'touches' in e ? e.touches[0].pageY : e.pageY;
   
-  scrollLeft = pageX - startX;
   scrollTop = pageY - startY;
   
   updateWallTransform();
 };
-
 
 // Event Listeners
 viewport.addEventListener('mousedown', startDragging);
@@ -127,12 +118,10 @@ viewport.addEventListener('touchstart', startDragging, { passive: false });
 window.addEventListener('touchend', stopDragging);
 window.addEventListener('touchmove', move, { passive: false });
 
-// Interactive notes: Bring to front on hover/click handled by CSS z-index mostly,
-// but let's add a bit of click zoom logic
+// Interactive notes: Bring to front
 const notes = document.querySelectorAll('.note');
 notes.forEach(note => {
   note.addEventListener('click', () => {
-    // Bring to top
     notes.forEach(n => (n as HTMLElement).style.zIndex = '10');
     (note as HTMLElement).style.zIndex = '100';
   });
@@ -144,19 +133,16 @@ const scrollToCluster = (targetCluster: Element) => {
   const containerRect = container.getBoundingClientRect();
   const clusterRect = targetCluster.getBoundingClientRect();
 
-  // Calculate local coordinates within the grid
-  const cx = ((clusterRect.left + clusterRect.width / 2) - containerRect.left) / zoomScale;
-  const cy = ((clusterRect.top + clusterRect.height / 2) - containerRect.top) / zoomScale;
+  // Calculate local Y coordinate within the grid
+  const cy = ((clusterRect.top + clusterRect.height / 2) - containerRect.top);
 
-  // Calculate target scroll positions to center the cluster
-  const targetX = -(cx * zoomScale - window.innerWidth / 2);
-  const targetY = -(cy * zoomScale - window.innerHeight / 2);
+  // Calculate target scroll positions to center the cluster vertically
+  const targetY = -(cy - window.innerHeight / 2);
 
   // Smooth Animate
-  const startX = scrollLeft;
   const startY = scrollTop;
   const startTime = performance.now();
-  const duration = 1000; // 1 second
+  const duration = 800; // slightly faster for linear flow
 
   const animate = (currentTime: number) => {
     const elapsed = currentTime - startTime;
@@ -167,7 +153,6 @@ const scrollToCluster = (targetCluster: Element) => {
       ? 4 * progress * progress * progress 
       : 1 - Math.pow(-2 * progress + 2, 3) / 2;
 
-    scrollLeft = startX + (targetX - startX) * ease;
     scrollTop = startY + (targetY - startY) * ease;
 
     updateWallTransform();
