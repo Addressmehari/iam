@@ -11,6 +11,10 @@ const zoomScale = 1;
 let currentClusterIndex = 0;
 let isDragging = false;
 let startY = 0;
+let lastY = 0;
+let velocity = 0;
+let rafId = 0;
+const friction = 0.95;
 
 
 // Connector Lines Logic
@@ -76,20 +80,52 @@ updateWallTransform();
 // Mouse Drag Logic
 const startDragging = (e: MouseEvent | TouchEvent) => {
   isDragging = true;
+  cancelAnimationFrame(rafId);
   const pageY = 'touches' in e ? e.touches[0].pageY : e.pageY;
   startY = pageY - scrollTop;
+  lastY = pageY;
+  velocity = 0;
   viewport.style.cursor = 'grabbing';
 };
 
 const stopDragging = () => {
   isDragging = false;
   viewport.style.cursor = 'grab';
+  
+  // Start momentum
+  const decay = () => {
+    if (Math.abs(velocity) < 0.1) return;
+    
+    scrollTop += velocity;
+    velocity *= friction;
+    
+    // Boundary check for momentum
+    const wallHeight = 30000;
+    const vh = window.innerHeight;
+    if (scrollTop > 0) {
+      scrollTop = 0;
+      velocity = 0;
+    } else if (scrollTop < -(wallHeight - vh)) {
+      scrollTop = -(wallHeight - vh);
+      velocity = 0;
+    }
+
+    updateWallTransform();
+    rafId = requestAnimationFrame(decay);
+  };
+  
+  rafId = requestAnimationFrame(decay);
 };
 
 const move = (e: MouseEvent | TouchEvent) => {
   if (!isDragging) return;
   e.preventDefault();
   const pageY = 'touches' in e ? e.touches[0].pageY : e.pageY;
+  
+  // Calculate instantaneous velocity
+  velocity = pageY - lastY;
+  lastY = pageY;
+  
   scrollTop = pageY - startY;
   updateWallTransform();
 };
