@@ -1,0 +1,260 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+
+:root {
+  --wall-bg: #0f172a;
+  --grid-color: rgba(148, 163, 184, 0.08);
+  --text-primary: #f8fafc;
+  --note-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  --accent-glow: rgba(56, 189, 248, 0.15);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none; /* Prevent text selection while dragging */
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* No standard scroll */
+  background-color: var(--wall-bg);
+  font-family: 'Outfit', sans-serif;
+}
+
+#viewport {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  cursor: grab;
+  box-shadow: inset 0 0 150px rgba(0,0,0,0.5); /* Physical depth vignette */
+}
+
+/* Immersive lighting overlay */
+#viewport::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at center, transparent 30%, rgba(15, 23, 42, 0.4) 100%);
+  z-index: 50;
+}
+
+#viewport:active {
+  cursor: grabbing;
+}
+
+#wall {
+  position: absolute;
+  width: 4000px;
+  height: 4000px;
+  background-image: 
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+  background-size: 100px 100px;
+  background-color: var(--wall-bg);
+  will-change: transform;
+}
+
+.wall-title {
+  position: absolute;
+  left: 50%;
+  top: 15%;
+  transform: translate(-50%, -50%);
+  font-size: 12rem;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.02);
+  pointer-events: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5em;
+  white-space: nowrap;
+}
+
+.instruction-overlay {
+  position: fixed;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(12px);
+  padding: 1rem 2rem;
+  border-radius: 3rem;
+  color: #94a3b8;
+  font-size: 0.85rem;
+  font-weight: 500;
+  z-index: 1000;
+  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.instruction-overlay::before {
+  content: '🖱️';
+  font-size: 1.1rem;
+}
+
+.grid-container {
+  position: absolute;
+  left: 50%;
+  top: 55%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 120px 60px;
+  padding: 200px;
+  width: max-content;
+}
+
+/* Distinct Zig-Zag Path Arrangement */
+.cluster:nth-of-type(1) { grid-column: 1; grid-row: 1; transform: translate(0, -50px) rotate(-1deg); }
+.cluster:nth-of-type(2) { grid-column: 2; grid-row: 2; transform: translate(20px, -20px) rotate(1.2deg); }
+.cluster:nth-of-type(3) { grid-column: 3; grid-row: 3; transform: translate(40px, 10px) rotate(-0.5deg); }
+.cluster:nth-of-type(4) { grid-column: 2; grid-row: 4; transform: translate(-20px, 40px) rotate(0.8deg); }
+.cluster:nth-of-type(5) { grid-column: 1; grid-row: 5; transform: translate(-40px, 100px) rotate(-1.2deg); }
+
+.cluster {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  padding: 2.5rem;
+  background: rgba(255, 255, 255, 0.015);
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.cluster:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.cluster-label {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cluster-notes {
+  display: grid;
+  grid-template-columns: repeat(2, 350px);
+  gap: 40px;
+}
+
+/* Sticky Note Styles */
+.note {
+  width: 350px;
+  min-height: 380px;
+  padding: 2.5rem;
+  border-radius: 4px 4px 40px 4px;
+  box-shadow: var(--note-shadow);
+  background-image: url("https://www.transparenttextures.com/patterns/p6.png");
+  display: flex;
+  flex-direction: column;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  position: relative;
+}
+
+/* Individual Rotations for Organic Feel */
+#identity .note:nth-child(1) { transform: rotate(-1.5deg); }
+#identity .note:nth-child(2) { transform: rotate(1.2deg); }
+#expertise .note:nth-child(1) { transform: rotate(0.8deg); }
+#expertise .note:nth-child(2) { transform: rotate(-1deg); }
+#portfolio .note:nth-child(1) { transform: rotate(-2deg); }
+#portfolio .note:nth-child(2) { transform: rotate(1.5deg); }
+#background .note:nth-child(1) { transform: rotate(1deg); }
+#background .note:nth-child(2) { transform: rotate(-1.2deg); }
+#contact .note:nth-child(1) { transform: rotate(-0.5deg); }
+#contact .note:nth-child(2) { transform: rotate(2deg); }
+
+.note:hover {
+  transform: scale(1.08) rotate(0deg) !important;
+  z-index: 100 !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+}
+
+.note-header {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: rgba(0, 0, 0, 0.45);
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.note-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 1.2rem;
+  line-height: 1.2;
+}
+
+.note-content {
+  color: #334155;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.note-content p {
+  margin-bottom: 1rem;
+}
+
+.note-content strong {
+  color: #0f172a;
+}
+
+.social-links {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.social-links a {
+  text-decoration: none;
+  color: #0f172a;
+  font-weight: 600;
+  padding: 0.8rem 1.2rem;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  transition: background 0.2s;
+  text-align: center;
+}
+
+.social-links a:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* Pin Effect */
+.note::before {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  background: radial-gradient(circle, #f43f5e 30%, #9f1239 100%);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Premium Colors - Balanced & Vibrant */
+.note-yellow { background-color: #fbbf24; }
+.note-blue { background-color: #38bdf8; }
+.note-pink { background-color: #f472b6; }
+.note-purple { background-color: #a78bfa; }
+.note-orange { background-color: #fb923c; }
+.note-teal { background-color: #2dd4bf; }
