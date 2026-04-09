@@ -172,18 +172,25 @@ notes.forEach(note => {
 const scrollToCluster = (targetCluster: Element) => {
   const container = document.querySelector('.grid-container')!;
   const containerRect = container.getBoundingClientRect();
-  const clusterRect = targetCluster.getBoundingClientRect();
+  const firstNote = targetCluster.querySelector('.note');
+  
+  let absoluteCenterY;
+  if (firstNote) {
+    const noteRect = firstNote.getBoundingClientRect();
+    const absoluteTop = noteRect.top - scrollTop;
+    absoluteCenterY = absoluteTop + noteRect.height / 2;
+  } else {
+    const clusterRect = targetCluster.getBoundingClientRect();
+    const absoluteTop = clusterRect.top - scrollTop;
+    absoluteCenterY = absoluteTop + clusterRect.height / 2;
+  }
 
-  // Calculate local Y coordinate within the grid
-  const cy = ((clusterRect.top + clusterRect.height / 2) - containerRect.top);
-
-  // Calculate target scroll positions to center the cluster vertically
-  const targetY = -(cy - window.innerHeight / 2);
+  const targetY = -(absoluteCenterY - window.innerHeight / 2);
 
   // Smooth Animate
   const startY = scrollTop;
   const startTime = performance.now();
-  const duration = 800; // slightly faster for linear flow
+  const duration = 1500; // Slower, more cinematic glide
 
   // Highlight the button briefly
   const btn = targetCluster.querySelector('.next-group-btn') as HTMLElement;
