@@ -68,7 +68,11 @@ const drawConnectors = () => {
 const updateWallTransform = () => {
   // LOCK X-AXIS: Only use vertical scroll
   wall.style.transform = `translate(0px, ${scrollTop}px)`;
-  drawConnectors();
+  
+  // Optimization: Only redraw connectors when movement is stable/momentum
+  if (!isDragging) {
+    drawConnectors();
+  }
   
   // Dynamic background offset (Scroll grid vertically only)
   viewport.style.backgroundPosition = `0px ${scrollTop}px`;
@@ -130,7 +134,7 @@ const move = (e: MouseEvent | TouchEvent) => {
   updateWallTransform();
 };
 
-// Touch Navigation (Mobile 1-finger scroll)
+// Touch Navigation
 window.addEventListener('touchstart', startDragging, { passive: false });
 window.addEventListener('touchmove', move, { passive: false });
 window.addEventListener('touchend', stopDragging);
@@ -233,8 +237,5 @@ window.addEventListener('load', () => {
   setTimeout(drawConnectors, 200); // Give time for CSS layout
 });
 window.addEventListener('resize', drawConnectors);
-
-
-console.log('Grid Wall Portfolio Initialized - Centered');
 
 console.log('Grid Wall Portfolio Initialized - Centered');

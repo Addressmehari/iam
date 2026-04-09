@@ -334,6 +334,8 @@ body, html {
     width: 90vw;
     padding: 1.5rem;
     gap: 1.5rem;
+    backdrop-filter: none;
+    background: rgba(36, 30, 26, 0.95);
   }
 
   .cluster-notes {
@@ -345,6 +347,8 @@ body, html {
     width: 100%;
     min-height: auto;
     padding: 1.2rem;
+    backdrop-filter: none;
+    background: rgba(45, 40, 36, 0.95);
   }
 
   .note-title {
