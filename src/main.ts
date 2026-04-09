@@ -171,7 +171,6 @@ notes.forEach(note => {
 // Navigation Logic
 const scrollToCluster = (targetCluster: Element) => {
   const container = document.querySelector('.grid-container')!;
-  const containerRect = container.getBoundingClientRect();
   const firstNote = targetCluster.querySelector('.note');
   
   let absoluteCenterY;
