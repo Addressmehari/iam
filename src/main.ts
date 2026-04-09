@@ -71,7 +71,20 @@ const updateWallTransform = () => {
 // Set initial position
 updateWallTransform();
 
-// Interactive notes: Bring to front
+// Touch Navigation (Mobile 1-finger scroll)
+let lastTouchY = 0;
+window.addEventListener('touchstart', (e) => {
+  lastTouchY = e.touches[0].pageY;
+}, { passive: false });
+
+window.addEventListener('touchmove', (e) => {
+  e.preventDefault();
+  const touchY = e.touches[0].pageY;
+  const delta = touchY - lastTouchY;
+  scrollTop += delta;
+  lastTouchY = touchY;
+  updateWallTransform();
+}, { passive: false });
 
 // Mouse Wheel / Trackpad (2-finger) scroll
 window.addEventListener('wheel', (e) => {

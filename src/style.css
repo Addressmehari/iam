@@ -329,6 +329,68 @@ body, html {
 .note-content p {
   margin-bottom: 1rem;
 }
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .landing-content {
+    top: 100px;
+    gap: 1rem;
+  }
+
+  .wall-title {
+    font-size: 3rem;
+    letter-spacing: 0.2em;
+    white-space: normal;
+    text-align: center;
+    width: 90vw;
+  }
+
+  .wall-subtitle {
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    width: 85vw;
+    text-align: center;
+    padding: 0.6rem 1rem;
+  }
+
+  .grid-container {
+    gap: 3000px; /* Still large, but slightly less than 5k for mobile */
+    padding-bottom: 3000px;
+  }
+
+  .cluster {
+    width: 90vw;
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+
+  .cluster-notes {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .note {
+    width: 100%;
+    min-height: auto;
+    padding: 1.2rem;
+  }
+
+  .note-title {
+    font-size: 1.3rem;
+  }
+
+  .next-group-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 1rem;
+  }
+  
+  .instruction-overlay {
+    width: 80vw;
+    font-size: 0.75rem;
+    padding: 0.8rem 1.2rem;
+    text-align: center;
+  }
+}
 
 .note-content strong {
   color: #0f172a;
