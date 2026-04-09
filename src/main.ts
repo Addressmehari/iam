@@ -179,4 +179,15 @@ window.addEventListener('load', () => {
 });
 window.addEventListener('resize', drawConnectors);
 
+// Start Exploration Button
+const startBtn = document.getElementById('start-btn');
+if (startBtn) {
+  startBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const clusters = document.querySelectorAll('.cluster');
+    currentClusterIndex = 0;
+    scrollToCluster(clusters[0]);
+  });
+}
+
 console.log('Grid Wall Portfolio Initialized - Centered');

@@ -67,19 +67,66 @@ body, html {
   transform-origin: 0 0;
 }
 
-.wall-title {
+.landing-content {
   position: absolute;
   left: 50%;
   top: 180px;
   transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  z-index: 100;
+}
+
+.wall-title {
   font-size: 6rem;
   font-weight: 900;
-  color: rgba(255, 255, 255, 0.95); /* Bright White */
-  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Deep Shadow for pop */
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   pointer-events: none;
   text-transform: uppercase;
   letter-spacing: 0.4em;
   white-space: nowrap;
+  line-height: 1;
+}
+
+.wall-subtitle {
+  color: #38bdf8;
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  background: rgba(56, 189, 248, 0.1);
+  padding: 0.5rem 1.5rem;
+  border-radius: 2rem;
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  backdrop-filter: blur(5px);
+}
+
+.start-exploration-btn {
+  margin-top: 2rem;
+  background: white;
+  color: #0f172a;
+  border: none;
+  padding: 1.2rem 2.5rem;
+  border-radius: 4rem;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  position: relative;
+  overflow: hidden;
+}
+
+.start-exploration-btn:hover {
+  transform: translateY(-5px) scale(1.05);
+}
+
+.start-exploration-btn:active {
+  transform: scale(0.95);
 }
 
 .instruction-overlay {
