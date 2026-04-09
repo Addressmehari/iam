@@ -9,6 +9,8 @@ let scrollTop = 0; // Start at the top of the wall
 
 const zoomScale = 1; 
 let currentClusterIndex = 0;
+let isDragging = false;
+let startY = 0;
 
 
 // Connector Lines Logic
@@ -71,20 +73,31 @@ const updateWallTransform = () => {
 // Set initial position
 updateWallTransform();
 
-// Touch Navigation (Mobile 1-finger scroll)
-let lastTouchY = 0;
-window.addEventListener('touchstart', (e) => {
-  lastTouchY = e.touches[0].pageY;
-}, { passive: false });
+// Mouse Drag Logic
+const startDragging = (e: MouseEvent | TouchEvent) => {
+  isDragging = true;
+  const pageY = 'touches' in e ? e.touches[0].pageY : e.pageY;
+  startY = pageY - scrollTop;
+  viewport.style.cursor = 'grabbing';
+};
 
-window.addEventListener('touchmove', (e) => {
+const stopDragging = () => {
+  isDragging = false;
+  viewport.style.cursor = 'grab';
+};
+
+const move = (e: MouseEvent | TouchEvent) => {
+  if (!isDragging) return;
   e.preventDefault();
-  const touchY = e.touches[0].pageY;
-  const delta = touchY - lastTouchY;
-  scrollTop += delta;
-  lastTouchY = touchY;
+  const pageY = 'touches' in e ? e.touches[0].pageY : e.pageY;
+  scrollTop = pageY - startY;
   updateWallTransform();
-}, { passive: false });
+};
+
+// Touch Navigation (Mobile 1-finger scroll)
+window.addEventListener('touchstart', startDragging, { passive: false });
+window.addEventListener('touchmove', move, { passive: false });
+window.addEventListener('touchend', stopDragging);
 
 // Mouse Wheel / Trackpad (2-finger) scroll
 window.addEventListener('wheel', (e) => {
@@ -105,8 +118,10 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
-// Event Listeners (Locked to Wheel/Keyboard/Buttons)
-// Removed Dragging/Panning listeners per user request
+// Event Listeners
+viewport.addEventListener('mousedown', startDragging);
+window.addEventListener('mouseup', stopDragging);
+window.addEventListener('mousemove', move);
 
 // Interactive notes: Bring to front
 const notes = document.querySelectorAll('.note');
@@ -178,15 +193,7 @@ window.addEventListener('load', () => {
 });
 window.addEventListener('resize', drawConnectors);
 
-// Start Exploration Button
-const startBtn = document.getElementById('start-btn');
-if (startBtn) {
-  startBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const clusters = document.querySelectorAll('.cluster');
-    currentClusterIndex = 0;
-    scrollToCluster(clusters[0]);
-  });
-}
+
+console.log('Grid Wall Portfolio Initialized - Centered');
 
 console.log('Grid Wall Portfolio Initialized - Centered');
