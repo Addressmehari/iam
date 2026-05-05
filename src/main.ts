@@ -16,6 +16,20 @@ let velocity = 0;
 let rafId = 0;
 const friction = 0.95;
 
+// ---- Cached scroll boundaries (recomputed on resize) ----
+let cachedBoundaries = { min: -30000, max: 0 };
+const refreshBoundaries = () => {
+  const vh = window.innerHeight;
+  const gridContainer = document.querySelector('.grid-container') as HTMLElement;
+  const contentHeight = gridContainer
+    ? gridContainer.offsetTop + gridContainer.offsetHeight
+    : 30000;
+  cachedBoundaries = { min: -(contentHeight - vh), max: 0 };
+};
+window.addEventListener('resize', refreshBoundaries);
+// Initial compute after layout
+window.addEventListener('load', refreshBoundaries);
+
 
 // Connector Lines Logic
 const drawConnectors = () => {
@@ -65,35 +79,27 @@ const drawConnectors = () => {
   svg.appendChild(path);
 };
 
-// Scroll Boundaries Logic
-const getScrollBoundaries = () => {
-  const vh = window.innerHeight;
-  // Calculate dynamic bottom boundary based on content
-  const gridContainer = document.querySelector('.grid-container') as HTMLElement;
-  const contentHeight = gridContainer ? (gridContainer.offsetTop + gridContainer.offsetHeight) : 30000;
-  
-  return {
-    min: -(contentHeight - vh),
-    max: 0 // Cannot go above the initial top position (the name area)
-  };
+// ---- Debounced connector redraw (never during active scroll) ----
+let connectorTimer = 0;
+const scheduleConnectors = () => {
+  clearTimeout(connectorTimer);
+  connectorTimer = window.setTimeout(drawConnectors, 200);
 };
 
+// ---- rAF-based wall update — one DOM write per frame ----
+let scrollRafPending = false;
 const updateWallTransform = () => {
-  // Clamp scrollTop before applying transform
-  const { min, max } = getScrollBoundaries();
-  if (scrollTop > max) scrollTop = max;
-  if (scrollTop < min) scrollTop = min;
-
-  // LOCK X-AXIS: Only use vertical scroll
-  wall.style.transform = `translate(0px, ${scrollTop}px)`;
-  
-  // Optimization: Only redraw connectors when movement is stable/momentum
-  if (!isDragging) {
-    drawConnectors();
-  }
-  
-  // Dynamic background offset (Scroll grid vertically only)
-  viewport.style.backgroundPosition = `0px ${scrollTop}px`;
+  if (scrollRafPending) return;
+  scrollRafPending = true;
+  requestAnimationFrame(() => {
+    scrollRafPending = false;
+    const { min, max } = cachedBoundaries;
+    if (scrollTop > max) scrollTop = max;
+    if (scrollTop < min) scrollTop = min;
+    wall.style.transform = `translate(0px, ${scrollTop}px)`;
+    viewport.style.backgroundPosition = `0px ${scrollTop}px`;
+    scheduleConnectors();
+  });
 };
 
 // Set initial position
@@ -114,24 +120,23 @@ const stopDragging = () => {
   isDragging = false;
   viewport.style.cursor = 'grab';
   
-  // Start momentum
+  // Start momentum via rAF loop
   const decay = () => {
-    if (Math.abs(velocity) < 0.1) return;
-    
+    if (Math.abs(velocity) < 0.5) {
+      scheduleConnectors(); // final redraw when fully stopped
+      return;
+    }
     scrollTop += velocity;
     velocity *= friction;
-    
-    // Boundary check for momentum (now centralized in updateWallTransform, 
-    // but we stop velocity here for a clean stop)
-    const { min, max } = getScrollBoundaries();
-    if (scrollTop >= max || scrollTop <= min) {
-      velocity = 0;
-    }
-
-    updateWallTransform();
+    const { min, max } = cachedBoundaries;
+    if (scrollTop >= max || scrollTop <= min) velocity = 0;
+    // Direct write — already inside rAF
+    if (scrollTop > max) scrollTop = max;
+    if (scrollTop < min) scrollTop = min;
+    wall.style.transform = `translate(0px, ${scrollTop}px)`;
+    viewport.style.backgroundPosition = `0px ${scrollTop}px`;
     rafId = requestAnimationFrame(decay);
   };
-  
   rafId = requestAnimationFrame(decay);
 };
 
@@ -153,14 +158,61 @@ window.addEventListener('touchstart', startDragging, { passive: false });
 window.addEventListener('touchmove', move, { passive: false });
 window.addEventListener('touchend', stopDragging);
 
-// Mouse Wheel / Trackpad (2-finger) scroll
-window.addEventListener('wheel', (e) => {
-  e.preventDefault();
-  scrollTop -= e.deltaY;
-  updateWallTransform();
-}, { passive: false });
+// ---- Carousel Logic (Arrows Only) ----
+const rail = document.getElementById('project-rail') as HTMLElement | null;
+const btnPrev = document.getElementById('rail-prev') as HTMLButtonElement | null;
+const btnNext = document.getElementById('rail-next') as HTMLButtonElement | null;
+const counter = document.getElementById('rail-counter');
+const railCards = document.querySelectorAll('.project-card');
 
-// Keyboard Navigation
+if (rail && btnPrev && btnNext && counter && railCards.length > 0) {
+  let railIndex = 0;
+  const total = railCards.length;
+
+  const updateCarousel = () => {
+    // Determine card width + gap to know how far to translate
+    const card = railCards[0] as HTMLElement;
+    const cardWidth = card.offsetWidth;
+    // get gap from computed style (defaulted to ~19.2px if 1.2rem)
+    const gap = parseFloat(getComputedStyle(rail).gap) || 0; 
+    
+    const moveX = (cardWidth + gap) * railIndex;
+    
+    // Animate all cards together
+    railCards.forEach(c => {
+      (c as HTMLElement).style.transform = `translateX(-${moveX}px)`;
+    });
+
+    // Update counter
+    counter.textContent = `${railIndex + 1} / ${total}`;
+
+    // Disable buttons at bounds
+    btnPrev.disabled = railIndex === 0;
+    btnNext.disabled = railIndex === total - 1;
+  };
+
+  btnPrev.addEventListener('click', () => {
+    if (railIndex > 0) {
+      railIndex--;
+      updateCarousel();
+    }
+  });
+
+  btnNext.addEventListener('click', () => {
+    if (railIndex < total - 1) {
+      railIndex++;
+      updateCarousel();
+    }
+  });
+
+  // Handle resize nicely
+  window.addEventListener('resize', updateCarousel);
+  
+  // Init
+  updateCarousel();
+}
+
+// Keyboard Navigation (Global)
 window.addEventListener('keydown', (e) => {
   const scrollStep = 100;
   if (e.key === 'ArrowDown') {
@@ -172,7 +224,7 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
-// Event Listeners
+// Event Listeners for Wall Drag
 viewport.addEventListener('mousedown', startDragging);
 window.addEventListener('mouseup', stopDragging);
 window.addEventListener('mousemove', move);
@@ -277,10 +329,55 @@ const animateAvatar = () => {
   setTimeout(toggleImage, 2000);
 };
 
+// Typewriter Effect
+const typewriterPhrases = [
+  'AI & ML Engineer',
+  'Full-stack Developer',
+  'Multiplayer Systems Builder',
+  'Generative AI Hacker',
+  'System Architect',
+];
+
+const startTypewriter = () => {
+  const el = document.getElementById('typewriter-text');
+  if (!el) return;
+
+  let phraseIndex = 0;
+  let charIndex = 0;
+  let isDeleting = false;
+
+  const tick = () => {
+    const current = typewriterPhrases[phraseIndex];
+
+    if (!isDeleting) {
+      charIndex++;
+      el.textContent = current.slice(0, charIndex);
+      if (charIndex === current.length) {
+        isDeleting = true;
+        setTimeout(tick, 1800); // pause before deleting
+        return;
+      }
+    } else {
+      charIndex--;
+      el.textContent = current.slice(0, charIndex);
+      if (charIndex === 0) {
+        isDeleting = false;
+        phraseIndex = (phraseIndex + 1) % typewriterPhrases.length;
+      }
+    }
+
+    const speed = isDeleting ? 45 : 80;
+    setTimeout(tick, speed);
+  };
+
+  tick();
+};
+
 // Initial draw and on resize
 window.addEventListener('load', () => {
   setTimeout(drawConnectors, 200); // Give time for CSS layout
   animateAvatar();
+  startTypewriter();
 });
 window.addEventListener('resize', drawConnectors);
 
