@@ -65,7 +65,25 @@ const drawConnectors = () => {
   svg.appendChild(path);
 };
 
+// Scroll Boundaries Logic
+const getScrollBoundaries = () => {
+  const vh = window.innerHeight;
+  // Calculate dynamic bottom boundary based on content
+  const gridContainer = document.querySelector('.grid-container') as HTMLElement;
+  const contentHeight = gridContainer ? (gridContainer.offsetTop + gridContainer.offsetHeight) : 30000;
+  
+  return {
+    min: -(contentHeight - vh),
+    max: 0 // Cannot go above the initial top position (the name area)
+  };
+};
+
 const updateWallTransform = () => {
+  // Clamp scrollTop before applying transform
+  const { min, max } = getScrollBoundaries();
+  if (scrollTop > max) scrollTop = max;
+  if (scrollTop < min) scrollTop = min;
+
   // LOCK X-AXIS: Only use vertical scroll
   wall.style.transform = `translate(0px, ${scrollTop}px)`;
   
@@ -103,14 +121,10 @@ const stopDragging = () => {
     scrollTop += velocity;
     velocity *= friction;
     
-    // Boundary check for momentum
-    const wallHeight = 30000;
-    const vh = window.innerHeight;
-    if (scrollTop > 0) {
-      scrollTop = 0;
-      velocity = 0;
-    } else if (scrollTop < -(wallHeight - vh)) {
-      scrollTop = -(wallHeight - vh);
+    // Boundary check for momentum (now centralized in updateWallTransform, 
+    // but we stop velocity here for a clean stop)
+    const { min, max } = getScrollBoundaries();
+    if (scrollTop >= max || scrollTop <= min) {
       velocity = 0;
     }
 
