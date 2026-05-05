@@ -204,7 +204,8 @@ body, html {
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  width: 450px; /* Slightly wider for the linear list */
+  width: 450px;
+  contain: layout style;           /* scope repaints to cluster boundary */
 }
 
 .next-group-btn {
@@ -392,6 +393,31 @@ body, html {
     font-size: 0.8rem;
     width: 80vw;
     text-align: center;
+  }
+
+  /* ---- Tinder-style project rail on mobile ---- */
+  .cluster-wide {
+    width: 100vw;
+    margin-left: calc(-50vw + 45vw); /* bleed to full width */
+    padding: 1.5rem 0 1rem;
+    border-radius: 24px;
+    overflow: hidden;
+  }
+
+  .project-rail-header {
+    padding: 0 1.5rem;
+  }
+
+  .project-card {
+    flex: 0 0 80vw;
+    min-height: 300px;
+    border-radius: 24px;
+  }
+
+  .rail-arrow {
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
   }
 }
 
@@ -641,7 +667,194 @@ body, html {
   font-weight: 300;
 }
 
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+/* ==============================
+   PROJECT RAIL — Horizontal Scroll
+   ============================== */
+
+/* Wide cluster override for the rail */
+.cluster-wide {
+  width: min(90vw, 860px);
+  overflow: visible;
 }
+
+.project-rail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.rail-counter {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.1em;
+  font-weight: 600;
+  background: rgba(255,255,255,0.1);
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+}
+
+/* Carousel Layout */
+.rail-carousel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rail-arrow {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: white;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.rail-arrow:hover:not(:disabled) {
+  background: rgba(255,255,255,0.15);
+  transform: scale(1.05);
+}
+
+.rail-arrow:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* The fixed rail track */
+.project-rail {
+  display: flex;
+  gap: 1.2rem;
+  overflow: hidden; /* Hide scrollbars, disable swipe */
+  padding: 1rem 0.5rem 1.5rem;
+  flex: 1;
+}
+
+/* Project Card */
+.project-card {
+  flex: 0 0 240px;
+  min-height: 260px;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  will-change: transform;
+  contain: layout style;
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1); /* JS drives this only */
+}
+
+/* Inner wrapper handles internal layout and CSS hover scaling */
+.pc-inner {
+  padding: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  height: 100%;
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
+}
+
+.project-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.05);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.project-card:hover .pc-inner {
+  transform: translateY(-8px) scale(1.02);
+}
+
+.project-card:hover {
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+.project-card:hover::before {
+  opacity: 1;
+}
+
+/* Card top row: emoji + github link */
+.pc-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.pc-emoji {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.pc-gh-link {
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-decoration: none;
+  color: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.1);
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  transition: all 0.2s ease;
+}
+
+.pc-gh-link:hover {
+  background: rgba(0,0,0,0.2);
+  color: rgba(0,0,0,0.8);
+  transform: translate(2px, -2px);
+}
+
+.pc-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: rgba(0,0,0,0.85);
+  line-height: 1.2;
+  margin-top: 0.25rem;
+}
+
+.pc-desc {
+  font-size: 0.82rem;
+  color: rgba(0,0,0,0.6);
+  line-height: 1.5;
+  flex: 1;
+}
+
+.pc-desc strong {
+  color: rgba(0,0,0,0.8);
+}
+
+.pc-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: auto;
+}
+
+.pc-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  background: rgba(0,0,0,0.12);
+  border-radius: 999px;
+  color: rgba(0,0,0,0.65);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Card colour variants */
+.pc-green  { background: linear-gradient(135deg, #86efac, #4ade80); }
+.pc-blue   { background: linear-gradient(135deg, #7dd3fc, #38bdf8); }
+.pc-pink   { background: linear-gradient(135deg, #f9a8d4, #f472b6); }
+.pc-orange { background: linear-gradient(135deg, #fdba74, #fb923c); }
+.pc-teal   { background: linear-gradient(135deg, #5eead4, #2dd4bf); }
+.pc-yellow { background: linear-gradient(135deg, #fde68a, #fbbf24); }
+.pc-purple { background: linear-gradient(135deg, #c4b5fd, #a78bfa); }
+.pc-red    { background: linear-gradient(135deg, #fca5a5, #f87171); }
+

@@ -115,40 +115,174 @@
             <button class="next-group-btn">Next Section <span>→</span></button>
           </div>
 
-          <!-- CLUSTER: PORTFOLIO -->
-          <div class="cluster" id="portfolio">
-            <h2 class="cluster-label">Featured Projects</h2>
-            <div class="cluster-notes">
-              <section class="note note-purple">
-                 <span class="note-header">05 // Development</span>
-                 <h2 class="note-title">Multiplayer Engine</h2>
-                 <div class="note-content">
-                   <p>Built a custom UDP-based multiplayer backend in Godot keeping <strong>20+ players in sync</strong> with sub-200ms round-trips — from scratch.</p>
-                   <p>High-concurrency Node.js lobby server handling matchmaking, reconnects & state sync in real time.</p>
-                   <div class="project-meta">
-                     <span class="chip chip-dark">Godot 4</span>
-                     <span class="chip chip-dark">Node.js</span>
-                     <span class="chip chip-dark">UDP</span>
-                     <a href="https://github.com/addressmehari" target="_blank" class="project-link">View on GitHub ↗</a>
-                   </div>
-                 </div>
-              </section>
+          <!-- CLUSTER: PORTFOLIO — Horizontal Rail -->
+          <div class="cluster cluster-wide" id="portfolio">
+            <div class="project-rail-header">
+              <h2 class="cluster-label">Featured Projects</h2>
+              <span class="rail-counter" id="rail-counter">1 / 9</span>
+            </div>
 
-              <section class="note note-teal">
-                <span class="note-header">06 // AI Automation</span>
-                <h2 class="note-title">AI Content Pipeline</h2>
-                <div class="note-content">
-                  <p>Automated end-to-end video production: <strong>Gemini generates the script → Blender renders → Edge-TTS narrates → FFmpeg outputs</strong> — zero human touch.</p>
-                  <p>Cuts content creation time from hours to minutes.</p>
-                  <div class="project-meta">
-                    <span class="chip chip-dark">Gemini API</span>
-                    <span class="chip chip-dark">Blender</span>
-                    <span class="chip chip-dark">FFmpeg</span>
-                    <a href="https://github.com/addressmehari" target="_blank" class="project-link">View on GitHub ↗</a>
+            <div class="rail-carousel">
+              <button class="rail-arrow" id="rail-prev" aria-label="Previous">&#8249;</button>
+              <div class="project-rail" id="project-rail">
+
+              <!-- Card 1: GitVille -->
+              <article class="project-card pc-green">
+                <div class="pc-inner">
+                  <div class="pc-top">
+                    <span class="pc-emoji">🏘️</span>
+                    <a href="https://github.com/Addressmehari/GitVille" target="_blank" class="pc-gh-link">↗</a>
+                  </div>
+                  <h3 class="pc-title">GitVille</h3>
+                  <p class="pc-desc">Every ⭐ you get builds a house in your city. A real-time GitHub-star-to-city visualizer — 2 stars, 1 fork, live as a GitHub Page.</p>
+                  <div class="pc-tags">
+                    <span class="pc-tag">JavaScript</span>
+                    <span class="pc-tag">GitHub API</span>
+                    <span class="pc-tag">Canvas</span>
                   </div>
                 </div>
-              </section>
-            </div>
+              </article>
+
+              <!-- Card 2: GitVille-test2 -->
+              <article class="project-card pc-blue">
+                <div class="pc-inner">
+                  <div class="pc-top">
+                    <span class="pc-emoji">🌆</span>
+                    <a href="https://github.com/Addressmehari/GitVille-test2" target="_blank" class="pc-gh-link">↗</a>
+                  </div>
+                  <h3 class="pc-title">GitVille v2</h3>
+                  <p class="pc-desc">Rebuilt from scratch — richer city generation, every repo becomes a building. Experimental generative city layout engine in JS.</p>
+                  <div class="pc-tags">
+                    <span class="pc-tag">JavaScript</span>
+                    <span class="pc-tag">Generative</span>
+                    <span class="pc-tag">MIT</span>
+                  </div>
+                </div>
+              </article>
+
+              <!-- Card 3: ig-auto -->
+              <article class="project-card pc-pink">
+                <div class="pc-inner">
+                  <div class="pc-top">
+                    <span class="pc-emoji">🤖</span>
+                    <a href="https://github.com/Addressmehari/ig-auto" target="_blank" class="pc-gh-link">↗</a>
+                  </div>
+                  <h3 class="pc-title">FollowersTown</h3>
+                  <p class="pc-desc">Instagram automation dashboard — follow/unfollow logic, analytics, and scheduling. Live on <strong>followerstown.vercel.app</strong>.</p>
+                  <div class="pc-tags">
+                    <span class="pc-tag">JavaScript</span>
+                    <span class="pc-tag">Automation</span>
+                    <span class="pc-tag">Vercel</span>
+                  </div>
+                </div>
+              </article>
+
+              <!-- Card 4: Mobile-Made-games -->
+              <article class="project-card pc-orange">
+                <div class="pc-inner">
+                  <div class="pc-top">
+                    <span class="pc-emoji">🎮</span>
+                    <a href="https://github.com/Addressmehari/Mobile-Made-games" target="_blank" class="pc-gh-link">↗</a>
+                  </div>
+                  <h3 class="pc-title">Mobile-Made Games</h3>
+                  <p class="pc-desc">Collection of original Android game prototypes — built to explore mechanics and indie game design. Released as playable APKs. <strong>2 stars.</strong></p>
+                  <div class="pc-tags">
+                    <span class="pc-tag">Android</span>
+                    <span class="pc-tag">Game Design</span>
+                    <span class="pc-tag">APK</span>
+                  </div>
+                </div>
+              </article>
+
+              <!-- Card 5: writing-machine -->
+              <article class="project-card pc-teal">
+                <div class="pc-inner">
+                  <div class="pc-top">
+                    <span class="pc-emoji">✍️</span>
+                    <a href="https://github.com/Addressmehari/writing-machine" target="_blank" class="pc-gh-link">↗</a>
+                  </div>
+                  <h3 class="pc-title">Writing Machine</h3>
+                  <p class="pc-desc">Python Image → G-code generator for CNC plotters & writing machines. Uses Potrace → SVG → G-code with a Tkinter GUI. <strong>1 star.</strong></p>
+                  <div class="pc-tags">
+                    <span class="pc-tag">Python</span>
+                    <span class="pc-tag">CNC</span>
+                    <span class="pc-tag">Potrace</span>
+                  </div>
+                </div>
+              </article>
+
+              <!-- Card 6: Mebo -->
+              <article class="project-card pc-yellow">
+                <div class="pc-inner">
+                  <div class="pc-top">
+                    <span class="pc-emoji">📈</span>
+                    <a href="https://github.com/Addressmehari/Mebo" target="_blank" class="pc-gh-link">↗</a>
+                  </div>
+                  <h3 class="pc-title">Mebo</h3>
+                  <p class="pc-desc">Flutter progress recording app. "Habo but improved" — habit tracking with streak system, custom categories, and offline-first storage.</p>
+                  <div class="pc-tags">
+                    <span class="pc-tag">Flutter</span>
+                    <span class="pc-tag">Dart</span>
+                    <span class="pc-tag">Offline-first</span>
+                  </div>
+                </div>
+              </article>
+
+              <!-- Card 7: BitVille -->
+              <article class="project-card pc-purple">
+                <div class="pc-inner">
+                  <div class="pc-top">
+                    <span class="pc-emoji">🏙️</span>
+                    <a href="https://github.com/Addressmehari/BitVille" target="_blank" class="pc-gh-link">↗</a>
+                  </div>
+                  <h3 class="pc-title">BitVille</h3>
+                  <p class="pc-desc">JS city-building simulator. Pixel-art city grows and evolves based on your GitHub activity and commits. <strong>1 star, MIT licensed.</strong></p>
+                  <div class="pc-tags">
+                    <span class="pc-tag">JavaScript</span>
+                    <span class="pc-tag">Pixel Art</span>
+                    <span class="pc-tag">Simulation</span>
+                  </div>
+                </div>
+              </article>
+
+              <!-- Card 8: Lightweight ADB Interface -->
+              <article class="project-card pc-red">
+                <div class="pc-inner">
+                  <div class="pc-top">
+                    <span class="pc-emoji">📱</span>
+                    <a href="https://github.com/Addressmehari/Lightweight_ABD_interface" target="_blank" class="pc-gh-link">↗</a>
+                  </div>
+                  <h3 class="pc-title">Lightweight ADB UI</h3>
+                  <p class="pc-desc">One-click Android APK installer & screen mirroring tool for Windows. No command line needed — clean GUI wrapper around ADB.</p>
+                  <div class="pc-tags">
+                    <span class="pc-tag">Windows</span>
+                    <span class="pc-tag">ADB</span>
+                    <span class="pc-tag">Dev Tool</span>
+                  </div>
+                </div>
+              </article>
+
+              <!-- Card 9: iam (this portfolio) -->
+              <article class="project-card pc-green">
+                <div class="pc-inner">
+                  <div class="pc-top">
+                    <span class="pc-emoji">🌐</span>
+                    <a href="https://github.com/Addressmehari/iam" target="_blank" class="pc-gh-link">↗</a>
+                  </div>
+                  <h3 class="pc-title">iam — This Portfolio</h3>
+                  <p class="pc-desc">This very site. A draggable sticky-note corkboard built with Vite + TypeScript. Live at <strong>iam-zeta.vercel.app</strong>.</p>
+                  <div class="pc-tags">
+                    <span class="pc-tag">TypeScript</span>
+                    <span class="pc-tag">Vite</span>
+                    <span class="pc-tag">Vercel</span>
+                  </div>
+                </div>
+              </article>
+
+              </div><!-- end project-rail -->
+              <button class="rail-arrow" id="rail-next" aria-label="Next">&#8250;</button>
+            </div><!-- end rail-carousel -->
+
             <button class="next-group-btn">Next Section <span>→</span></button>
           </div>
 
