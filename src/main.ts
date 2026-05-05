@@ -277,10 +277,55 @@ const animateAvatar = () => {
   setTimeout(toggleImage, 2000);
 };
 
+// Typewriter Effect
+const typewriterPhrases = [
+  'AI & ML Engineer',
+  'Full-stack Developer',
+  'Multiplayer Systems Builder',
+  'Generative AI Hacker',
+  'System Architect',
+];
+
+const startTypewriter = () => {
+  const el = document.getElementById('typewriter-text');
+  if (!el) return;
+
+  let phraseIndex = 0;
+  let charIndex = 0;
+  let isDeleting = false;
+
+  const tick = () => {
+    const current = typewriterPhrases[phraseIndex];
+
+    if (!isDeleting) {
+      charIndex++;
+      el.textContent = current.slice(0, charIndex);
+      if (charIndex === current.length) {
+        isDeleting = true;
+        setTimeout(tick, 1800); // pause before deleting
+        return;
+      }
+    } else {
+      charIndex--;
+      el.textContent = current.slice(0, charIndex);
+      if (charIndex === 0) {
+        isDeleting = false;
+        phraseIndex = (phraseIndex + 1) % typewriterPhrases.length;
+      }
+    }
+
+    const speed = isDeleting ? 45 : 80;
+    setTimeout(tick, speed);
+  };
+
+  tick();
+};
+
 // Initial draw and on resize
 window.addEventListener('load', () => {
   setTimeout(drawConnectors, 200); // Give time for CSS layout
   animateAvatar();
+  startTypewriter();
 });
 window.addEventListener('resize', drawConnectors);
 
