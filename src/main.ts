@@ -246,9 +246,38 @@ nextButtons.forEach((btn, index) => {
   });
 });
 
+// Avatar Animation Logic
+const animateAvatar = () => {
+  const neutral = document.getElementById('avatar-neutral');
+  const wink = document.getElementById('avatar-wink');
+  if (!neutral || !wink) return;
+
+  let isWinking = false;
+
+  const toggleImage = () => {
+    isWinking = !isWinking;
+    
+    if (isWinking) {
+      neutral.classList.remove('active');
+      wink.classList.add('active');
+    } else {
+      wink.classList.remove('active');
+      neutral.classList.add('active');
+    }
+    
+    // Random delay for a more natural feel
+    const nextDelay = isWinking ? 400 : (Math.random() * 3000 + 2000);
+    setTimeout(toggleImage, nextDelay);
+  };
+
+  // Start the animation after a short delay
+  setTimeout(toggleImage, 2000);
+};
+
 // Initial draw and on resize
 window.addEventListener('load', () => {
   setTimeout(drawConnectors, 200); // Give time for CSS layout
+  animateAvatar();
 });
 window.addEventListener('resize', drawConnectors);
 
