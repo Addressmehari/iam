@@ -248,9 +248,10 @@ nextButtons.forEach((btn, index) => {
 
 // Avatar Animation Logic
 const animateAvatar = () => {
+  const container = document.querySelector('.avatar-container');
   const neutral = document.getElementById('avatar-neutral');
   const wink = document.getElementById('avatar-wink');
-  if (!neutral || !wink) return;
+  if (!neutral || !wink || !container) return;
 
   let isWinking = false;
 
@@ -260,13 +261,15 @@ const animateAvatar = () => {
     if (isWinking) {
       neutral.classList.remove('active');
       wink.classList.add('active');
+      container.classList.add('winking');
     } else {
       wink.classList.remove('active');
       neutral.classList.add('active');
+      container.classList.remove('winking');
     }
     
-    // Random delay for a more natural feel
-    const nextDelay = isWinking ? 400 : (Math.random() * 3000 + 2000);
+    // Fixed timing: 3s neutral, 0.5s wink
+    const nextDelay = isWinking ? 500 : 3000;
     setTimeout(toggleImage, nextDelay);
   };
 
